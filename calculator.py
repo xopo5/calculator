@@ -1,11 +1,14 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QPushButton,QLineEdit,QGridLayout,QWidget,QSizePolicy
+to_solve = ''
 class redactbutton(QPushButton):
     def __init__(self,text):
         super().__init__(text)
         self.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
         self.setMinimumSize(40,40)
+        self.clicked.connect(self.btn_handler)
+        
         self.setFont(QFont("Segoe UI",14))
         self.setStyleSheet('''
             QPushButton {
@@ -22,9 +25,25 @@ class redactbutton(QPushButton):
                 background-color: #777777;
             }
         ''')
+    def btn_handler(self):
+        global to_solve
+        if self.text() in '0123456789/*-+.':
+            to_solve += self.text()
+        elif self.text() == '<-':
+            to_solve = self.to_solve[0:-1]
+        elif self.text() == 'C':
+            to_solve =''
+        elif self.text() == '=':
+            try:
+                to_solve = str(eval(to_solve))
+            except:
+                to_solve = '0'
+        textline.setText(to_solve)
+        
+                
 
 
-main = QApplication([])
+main = QApplication([]) 
 window = QWidget()
 window.setStyleSheet('''
     QWidget {
@@ -81,8 +100,6 @@ mainlayout.addWidget(buttonminus,1,3)
 mainlayout.addWidget(buttonadd,1,2)
 mainlayout.addWidget(buttondel,1,0)
 mainlayout.addWidget(buttonclear,1,1)
-
-
 
 window.setLayout(mainlayout)
 window.setWindowTitle('C A L C')
